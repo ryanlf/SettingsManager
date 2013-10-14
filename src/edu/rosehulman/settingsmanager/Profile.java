@@ -1,13 +1,15 @@
 package edu.rosehulman.settingsmanager;
 
-public class Profile {
+import java.io.Serializable;
+
+public class Profile implements Serializable {
 	
 	private String profileName;
 	private int volumeLevel;
 	
 	public Profile(){
-		profileName = "Add New";
-		volumeLevel = -1;
+		profileName = null;
+		volumeLevel = 0;
 	}
 	
 	public Profile(String profileName,int volumeLevel) {
@@ -22,6 +24,16 @@ public class Profile {
 	
 	public int getVolumeLevel(){
 		return volumeLevel;
+	}
+
+	public void setVolume(int progress) {
+		volumeLevel = progress;
+		
+	}
+
+	public void setName(String string) {
+		profileName = string;
+		
 	}
 
 }

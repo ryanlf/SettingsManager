@@ -1,44 +1,80 @@
 package edu.rosehulman.settingsmanager;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class Profiles extends Activity implements OnItemClickListener,OnItemLongClickListener {
 	
-	private ArrayList<Profile> mTestData = new ArrayList<Profile>();
+	private ArrayList<Profile> mTestData;
 	private ArrayAdapter<Profile> ad;
-	private int addNum = 0;
+	private Button mAddNew;
+	public static final String KEY_EDIT_PROFILE = "KEY_EDIT_PROFILE";
+	public static final int REQUEST_CODE_EDIT_PROFILE = 1;
+	public static final int REQUEST_CODE_ADD_PROFILE = 2;
+	private Profile inEdit = null;
+	private AudioManager mAudioManager;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profiles);
-		mTestData.add(new Profile("Test1",0));
-		mTestData.add(new Profile("Test2",1));
-		mTestData.add(new Profile("Test3",2));
-		
-		mTestData.add(new Profile());
-		
-		
+		mAudioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+		try {
+			FileInputStream fileRead = openFileInput(getString(R.string.data_file_name));
+			ObjectInputStream objectInput = new ObjectInputStream(fileRead);
+			mTestData = (ArrayList<Profile>) objectInput.readObject();
+			objectInput.close();
+			fileRead.close();
+		} catch (FileNotFoundException e) {
+			mTestData = new ArrayList<Profile>();
+		} catch (IOException e) {
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		mAddNew =(Button) findViewById(R.id.add_new_button);
+		mAddNew.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent addIntent = new Intent(v.getContext(),EditProfile.class);
+				addIntent.putExtra(KEY_EDIT_PROFILE, new Profile());
+				startActivityForResult(addIntent, REQUEST_CODE_ADD_PROFILE);
+			}
+		});
 		ad = new ArrayAdapter<Profile>(this, android.R.layout.simple_list_item_1,
 				android.R.id.text1, mTestData);
-		
 		ListView listView = (ListView)findViewById(R.id.profile_list);
-		
 		listView.setAdapter(ad);
 		listView.setOnItemClickListener(this);
 		listView.setOnItemLongClickListener(this);
-		
 	}
 
 	@Override
@@ -50,22 +86,97 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		if (mTestData.get(arg2).toString() == "Add New"){
-			ad.add(new Profile("Object" + addNum, 10));
-			ad.remove(mTestData.get(arg2));
-			addNum++;
-			Toast.makeText(this, "Added Object", Toast.LENGTH_SHORT).show();
-			ad.add(new Profile());
-			
-		} else
+		mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, mTestData.get(arg2).getVolumeLevel(), 0);
 		Toast.makeText(this, ""+mTestData.get(arg2).getVolumeLevel(), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int arg2,
 			long arg3) {
-		Toast.makeText(this, "Long Click" + mTestData.get(arg2), Toast.LENGTH_SHORT).show();
+		DialogFragment df = new DialogFragment() {
+			
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder editBuilder = new AlertDialog.Builder(
+						getActivity());
+				editBuilder.setMessage(R.string.long_hold_message);
+				editBuilder.setPositiveButton(R.string.edit,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								inEdit = mTestData.get(arg2);
+								Intent editIntent = new Intent(getActivity(),EditProfile.class);
+								editIntent.putExtra(KEY_EDIT_PROFILE, inEdit);
+								getActivity().startActivityForResult(editIntent, REQUEST_CODE_EDIT_PROFILE);
+							}
+						});
+				editBuilder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						removeProfile(mTestData.get(arg2));
+					}
+				});
+				editBuilder.setNeutralButton(R.string.cancel,
+						null);
+
+				return editBuilder.create();
+
+			}
+		};
+		df.show(getFragmentManager(), "");
 		return true;
 	}
-
+	
+	private boolean addNewProfile(Profile profile){
+		mTestData.add(profile);
+		try {
+			FileOutputStream fileCreate = openFileOutput(getString(R.string.data_file_name), Context.MODE_PRIVATE);
+			ObjectOutputStream objectCreate = new ObjectOutputStream(fileCreate);
+			objectCreate.writeObject(mTestData);
+			objectCreate.close();
+			fileCreate.close();
+		} catch (FileNotFoundException e) {
+			mTestData.remove(profile);
+			return false;
+		} catch (IOException e) {
+			mTestData.remove(profile);
+			e.printStackTrace();
+			return false;
+		}
+		ad.notifyDataSetChanged();
+		return true;
+	}
+	private boolean removeProfile(Profile profile){
+		mTestData.remove(profile);
+		try {
+			FileOutputStream fileCreate = openFileOutput(getString(R.string.data_file_name), Context.MODE_PRIVATE);
+			ObjectOutputStream objectCreate = new ObjectOutputStream(fileCreate);
+			objectCreate.writeObject(mTestData);
+			objectCreate.close();
+			fileCreate.close();
+		} catch (FileNotFoundException e) {
+			mTestData.add(profile);
+			return false;
+		} catch (IOException e) {
+			mTestData.add(profile);
+			e.printStackTrace();
+			return false;
+		}
+		ad.notifyDataSetChanged();
+		return true;
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CODE_EDIT_PROFILE && resultCode == RESULT_OK){
+			mTestData.remove(inEdit);
+			addNewProfile((Profile) data.getSerializableExtra(KEY_EDIT_PROFILE));
+		}
+		if (requestCode == REQUEST_CODE_EDIT_PROFILE){
+			inEdit = null;
+		}
+		if (requestCode == REQUEST_CODE_ADD_PROFILE && resultCode == RESULT_OK){
+			addNewProfile((Profile) data.getSerializableExtra(KEY_EDIT_PROFILE));
+		}
+	}
 }
