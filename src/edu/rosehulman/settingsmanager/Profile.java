@@ -2,19 +2,23 @@ package edu.rosehulman.settingsmanager;
 
 import java.io.Serializable;
 
+import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
+
 public class Profile implements Serializable {
 	
 	private String profileName;
-	private int volumeLevel;
+	private int systemVolume;
 	
 	public Profile(){
 		profileName = null;
-		volumeLevel = 0;
+		systemVolume = 0;
 	}
 	
-	public Profile(String profileName,int volumeLevel) {
+	public Profile(String profileName,int systemVolume) {
 		this.profileName = profileName;
-		this.volumeLevel = volumeLevel;
+		this.systemVolume = systemVolume;
 	}
 	
 	@Override
@@ -22,17 +26,23 @@ public class Profile implements Serializable {
 		return profileName;
 	}
 	
-	public int getVolumeLevel(){
-		return volumeLevel;
+	public int getSystemVolume(){
+		return systemVolume;
 	}
 
 	public void setVolume(int progress) {
-		volumeLevel = progress;
+		systemVolume = progress;
 		
 	}
 
 	public void setName(String string) {
 		profileName = string;
+		
+	}
+	public void setSettings(Activity parent){
+		AudioManager mAudioManager=(AudioManager) parent.getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, systemVolume, 0);
+		
 		
 	}
 

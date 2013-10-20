@@ -8,11 +8,15 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
-    <string name="volume">Volume</string>
+    <string name="system_volume">System Volume</string>
     <string name="profile_name_edit_hint">Profile Name</string>
     <string name="long_hold_message">What do you want to do?</string>
     <string name="edit">Edit</string>
     <string name="data_file_name">PROFILE_DATA</string>
     <string name="add_new">Add New</string>
+    <string name="ring_volume">Ringer Volume</string>
+    <string name="alarm_volume">Alarm Volume</string>
+    <string name="notification_volume">Notification Volume</string>
+    <string name="title_activity_favorite_quotes">Your Favorite Quotes</string>
 
 </resources>

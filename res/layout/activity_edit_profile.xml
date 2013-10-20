@@ -40,13 +40,41 @@
             <TextView 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/volume"/>
-
+                android:text="@string/system_volume"/>
             <SeekBar
                 android:id="@+id/system_volume_control"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-               
+                 />
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ring_volume"/>
+            <SeekBar
+                android:id="@+id/ring_volume_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notification_volume"/>
+            <SeekBar
+                android:id="@+id/notification_volume_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_volume"/>
+            <SeekBar
+                android:id="@+id/alarm_volume_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                  />
             
         </LinearLayout>

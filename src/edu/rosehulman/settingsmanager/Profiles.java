@@ -31,10 +31,11 @@ import android.widget.Toast;
 
 public class Profiles extends Activity implements OnItemClickListener,OnItemLongClickListener {
 	
-	private ArrayList<Profile> mTestData;
+	private ArrayList<Profile> mProfileData;
 	private ArrayAdapter<Profile> ad;
 	private Button mAddNew;
 	public static final String KEY_EDIT_PROFILE = "KEY_EDIT_PROFILE";
+	public static final String KEY_REQUEST_CODE = "KEY_REQUEST_CODE";
 	public static final int REQUEST_CODE_EDIT_PROFILE = 1;
 	public static final int REQUEST_CODE_ADD_PROFILE = 2;
 	private Profile inEdit = null;
@@ -49,11 +50,11 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		try {
 			FileInputStream fileRead = openFileInput(getString(R.string.data_file_name));
 			ObjectInputStream objectInput = new ObjectInputStream(fileRead);
-			mTestData = (ArrayList<Profile>) objectInput.readObject();
+			mProfileData = (ArrayList<Profile>) objectInput.readObject();
 			objectInput.close();
 			fileRead.close();
 		} catch (FileNotFoundException e) {
-			mTestData = new ArrayList<Profile>();
+			mProfileData = new ArrayList<Profile>();
 		} catch (IOException e) {
 			
 		} catch (ClassNotFoundException e) {
@@ -66,11 +67,12 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 			public void onClick(View v) {
 				Intent addIntent = new Intent(v.getContext(),EditProfile.class);
 				addIntent.putExtra(KEY_EDIT_PROFILE, new Profile());
+				addIntent.putExtra(KEY_REQUEST_CODE, REQUEST_CODE_ADD_PROFILE);
 				startActivityForResult(addIntent, REQUEST_CODE_ADD_PROFILE);
 			}
 		});
 		ad = new ArrayAdapter<Profile>(this, android.R.layout.simple_list_item_1,
-				android.R.id.text1, mTestData);
+				android.R.id.text1, mProfileData);
 		ListView listView = (ListView)findViewById(R.id.profile_list);
 		listView.setAdapter(ad);
 		listView.setOnItemClickListener(this);
@@ -86,8 +88,8 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, mTestData.get(arg2).getVolumeLevel(), 0);
-		Toast.makeText(this, ""+mTestData.get(arg2).getVolumeLevel(), Toast.LENGTH_SHORT).show();
+		mProfileData.get(arg2).setSettings(this);
+		Toast.makeText(this, mProfileData.get(arg2).toString() + " profile loaded", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -104,9 +106,10 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								inEdit = mTestData.get(arg2);
+								inEdit = mProfileData.get(arg2);
 								Intent editIntent = new Intent(getActivity(),EditProfile.class);
 								editIntent.putExtra(KEY_EDIT_PROFILE, inEdit);
+								editIntent.putExtra(KEY_REQUEST_CODE, REQUEST_CODE_EDIT_PROFILE);
 								getActivity().startActivityForResult(editIntent, REQUEST_CODE_EDIT_PROFILE);
 							}
 						});
@@ -114,7 +117,7 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						removeProfile(mTestData.get(arg2));
+						removeProfile(mProfileData.get(arg2));
 					}
 				});
 				editBuilder.setNeutralButton(R.string.cancel,
@@ -129,18 +132,18 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 	}
 	
 	private boolean addNewProfile(Profile profile){
-		mTestData.add(profile);
+		mProfileData.add(profile);
 		try {
 			FileOutputStream fileCreate = openFileOutput(getString(R.string.data_file_name), Context.MODE_PRIVATE);
 			ObjectOutputStream objectCreate = new ObjectOutputStream(fileCreate);
-			objectCreate.writeObject(mTestData);
+			objectCreate.writeObject(mProfileData);
 			objectCreate.close();
 			fileCreate.close();
 		} catch (FileNotFoundException e) {
-			mTestData.remove(profile);
+			mProfileData.remove(profile);
 			return false;
 		} catch (IOException e) {
-			mTestData.remove(profile);
+			mProfileData.remove(profile);
 			e.printStackTrace();
 			return false;
 		}
@@ -148,18 +151,18 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		return true;
 	}
 	private boolean removeProfile(Profile profile){
-		mTestData.remove(profile);
+		mProfileData.remove(profile);
 		try {
 			FileOutputStream fileCreate = openFileOutput(getString(R.string.data_file_name), Context.MODE_PRIVATE);
 			ObjectOutputStream objectCreate = new ObjectOutputStream(fileCreate);
-			objectCreate.writeObject(mTestData);
+			objectCreate.writeObject(mProfileData);
 			objectCreate.close();
 			fileCreate.close();
 		} catch (FileNotFoundException e) {
-			mTestData.add(profile);
+			mProfileData.add(profile);
 			return false;
 		} catch (IOException e) {
-			mTestData.add(profile);
+			mProfileData.add(profile);
 			e.printStackTrace();
 			return false;
 		}
@@ -169,7 +172,7 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_CODE_EDIT_PROFILE && resultCode == RESULT_OK){
-			mTestData.remove(inEdit);
+			mProfileData.remove(inEdit);
 			addNewProfile((Profile) data.getSerializableExtra(KEY_EDIT_PROFILE));
 		}
 		if (requestCode == REQUEST_CODE_EDIT_PROFILE){
