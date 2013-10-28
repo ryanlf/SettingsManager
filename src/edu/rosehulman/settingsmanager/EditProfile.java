@@ -48,8 +48,10 @@ public class EditProfile extends Activity implements OnClickListener {
 		mSystemVolumeControl = (SeekBar) findViewById(R.id.system_volume_control);
 		mRingerVolumeControl = (SeekBar) findViewById(R.id.ring_volume_control);
 		mRingerSoundButton = (Button) findViewById(R.id.ring_sound_button);
+		mRingerSoundButton.setOnClickListener(this);
 		mNotificationVolumeControl = (SeekBar) findViewById(R.id.notification_volume_control);
 		mNotificationSoundButton = (Button) findViewById(R.id.notification_sound_button);
+		mNotificationSoundButton.setOnClickListener(this);
 		mAlarmVolumeControl = (SeekBar) findViewById(R.id.alarm_volume_control);
 		
 		if (requestCode == Profiles.REQUEST_CODE_EDIT_PROFILE)
@@ -128,7 +130,6 @@ public class EditProfile extends Activity implements OnClickListener {
 		mRingerVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
 		mNotificationVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
 		mAlarmVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-		mNotificationSoundButton.setOnClickListener(this);
 		mNameView.setActivated(false);
 	}
 
