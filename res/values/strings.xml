@@ -18,5 +18,15 @@
     <string name="alarm_volume">Alarm Volume</string>
     <string name="notification_volume">Notification Volume</string>
     <string name="title_activity_favorite_quotes">Your Favorite Quotes</string>
+    <string name="title_activity_change_settings_menu">Change Settings</string>
+    <string name="reset">Reset App</string>
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="reset_short">Reset</string>
+    <string name="reset_description">Resetting this app will delete ALL of your profiles. Are you sure you want to proceed?</string>
+    <string name="yes">Yes</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

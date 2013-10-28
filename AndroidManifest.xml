@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
     <application
@@ -31,6 +31,22 @@
             android:name="edu.rosehulman.settingsmanager.FavoriteQuotesActivity"
             android:label="@string/title_activity_favorite_quotes" >
         </activity>
+        <activity
+            android:name="edu.rosehulman.settingsmanager.ChangeSettingsMenuActivity"
+            android:label="@string/title_activity_change_settings_menu" >
+        </activity>
+
+        <receiver android:name="edu.rosehulman.settingsmanager.SettingsManagerWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/settings_manager_widget_info" />
+        </receiver>
+        <service android:name="edu.rosehulman.settingsmanager.SettingsManagerWidgetService"
+			android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

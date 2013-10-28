@@ -18,6 +18,7 @@
 
         <EditText
             android:id="@+id/editText1"
+            android:hint="@string/profile_name_edit_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="5" >

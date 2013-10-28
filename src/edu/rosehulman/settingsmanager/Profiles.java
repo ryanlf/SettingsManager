@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
-
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
@@ -18,7 +16,10 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -39,14 +40,11 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 	public static final int REQUEST_CODE_EDIT_PROFILE = 1;
 	public static final int REQUEST_CODE_ADD_PROFILE = 2;
 	private Profile inEdit = null;
-	private AudioManager mAudioManager;
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profiles);
-		mAudioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+		
 		try {
 			FileInputStream fileRead = openFileInput(getString(R.string.data_file_name));
 			ObjectInputStream objectInput = new ObjectInputStream(fileRead);
@@ -81,7 +79,6 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profiles, menu);
 		return true;
 	}
@@ -181,5 +178,52 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		if (requestCode == REQUEST_CODE_ADD_PROFILE && resultCode == RESULT_OK){
 			addNewProfile((Profile) data.getSerializableExtra(KEY_EDIT_PROFILE));
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case R.id.reset_app_settings:
+			resetApp();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void resetApp() {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
+						getActivity());
+				alertBuilder.setMessage(R.string.reset_description);
+				alertBuilder.setIcon(R.drawable.ic_dialog_alert);
+				alertBuilder.setTitle(R.string.reset);
+				alertBuilder.setPositiveButton(R.string.yes,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								int k =0;
+								while(!mProfileData.isEmpty()){
+									removeProfile(mProfileData.get(0));
+								}
+								dialog.dismiss();
+							}
+						});
+				alertBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,
+							int which) {
+						
+						dialog.dismiss();
+					}
+				});
+
+				return alertBuilder.create();
+			}
+		};
+		df.show(getFragmentManager(), "");		
 	}
 }
