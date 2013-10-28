@@ -19,6 +19,7 @@ public class EditProfile extends Activity implements OnClickListener {
 	private Profile mProfile;
 	private SeekBar mSystemVolumeControl;
 	private SeekBar mRingerVolumeControl;
+	private Button mRingerSoundButton;
 	private SeekBar mNotificationVolumeControl;
 	private Button mNotificationSoundButton;
 	private SeekBar mAlarmVolumeControl;
@@ -32,6 +33,7 @@ public class EditProfile extends Activity implements OnClickListener {
 	private static final int REQUEST_CODE_RINGTONE_SOUND = 2;
 	
 	private Uri mCurrentNotificationSound;
+	private Uri mCurrentRingerSound;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,9 @@ public class EditProfile extends Activity implements OnClickListener {
 		mNameView = (EditText) findViewById(R.id.editText1);
 		mSystemVolumeControl = (SeekBar) findViewById(R.id.system_volume_control);
 		mRingerVolumeControl = (SeekBar) findViewById(R.id.ring_volume_control);
+		mRingerSoundButton = (Button) findViewById(R.id.ring_sound_button);
 		mNotificationVolumeControl = (SeekBar) findViewById(R.id.notification_volume_control);
-		mNotificationSoundButton = (Button) findViewById(R.id.notification_sound_spinner);
+		mNotificationSoundButton = (Button) findViewById(R.id.notification_sound_button);
 		mAlarmVolumeControl = (SeekBar) findViewById(R.id.alarm_volume_control);
 		
 		if (requestCode == Profiles.REQUEST_CODE_EDIT_PROFILE)
@@ -80,6 +83,7 @@ public class EditProfile extends Activity implements OnClickListener {
 	private void save(){
 		mProfile.setSystemVolume(mSystemVolumeControl.getProgress());
 		mProfile.setRingerVolume(mRingerVolumeControl.getProgress());
+		mProfile.setRingerRingtone(mCurrentRingerSound, this);
 		mProfile.setNotificationVolume(mNotificationVolumeControl.getProgress());
 		mProfile.setNotificationRingtone(mCurrentNotificationSound, this);
 		mProfile.setAlarmVolume(mAlarmVolumeControl.getProgress());
@@ -97,16 +101,21 @@ public class EditProfile extends Activity implements OnClickListener {
 		initializeBasicProfileSettings();
 		mSystemVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
 		mRingerVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_RING));
+		mCurrentRingerSound = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
+		Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentRingerSound);
+		mNotificationSoundButton.setText(ringtone.getTitle(this));
 		mNotificationVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION));
 		mAlarmVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM));
 		mCurrentNotificationSound = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION);
-		Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentNotificationSound);
+		ringtone = RingtoneManager.getRingtone(this, mCurrentNotificationSound);
 		mNotificationSoundButton.setText(ringtone.getTitle(this));
 	}
 	private void intializeEditProfile(){
 		initializeBasicProfileSettings();
 		mSystemVolumeControl.setProgress(mProfile.getSystemVolume());
 		mRingerVolumeControl.setProgress(mProfile.getRingerVolume());
+		mCurrentRingerSound = mProfile.getRingerRingtone();
+		mRingerSoundButton.setText(mProfile.getRingerRingtoneName());
 		mNotificationVolumeControl.setProgress(mProfile.getNotificationVolume());
 		mCurrentNotificationSound = mProfile.getNotificationRingtone();
 		mNotificationSoundButton.setText(mProfile.getNotificationRingtoneName());
@@ -125,13 +134,26 @@ public class EditProfile extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
-		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
-		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
-		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, mCurrentNotificationSound);
-		
-		this.startActivityForResult(intent, REQUEST_CODE_NOTIFICATION_SOUND);
+		switch(v.getId()){
+		case R.id.notification_sound_button:
+			Intent notificationIntent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+			notificationIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+			notificationIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Notification Tone");
+			notificationIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
+			notificationIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, mCurrentNotificationSound);
+			
+			this.startActivityForResult(notificationIntent, REQUEST_CODE_NOTIFICATION_SOUND);
+			break;
+		case R.id.ring_sound_button:
+			Intent ringtoneIntent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+			ringtoneIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+			ringtoneIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ring Tone");
+			ringtoneIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
+			ringtoneIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, mCurrentRingerSound);
+			
+			this.startActivityForResult(ringtoneIntent, REQUEST_CODE_RINGTONE_SOUND);
+			break;
+		}
 	}
 	
 	@Override
@@ -140,6 +162,11 @@ public class EditProfile extends Activity implements OnClickListener {
 			mCurrentNotificationSound = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 			Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentNotificationSound);
 			mNotificationSoundButton.setText(ringtone.getTitle(this));
+		}
+		else if (requestCode == REQUEST_CODE_RINGTONE_SOUND && resultCode == RESULT_OK){
+			mCurrentRingerSound = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+			Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentRingerSound);
+			mRingerSoundButton.setText(ringtone.getTitle(this));
 		}
 	}
 

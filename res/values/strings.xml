@@ -15,9 +15,10 @@
     <string name="data_file_name">PROFILE_DATA</string>
     <string name="add_new">Add New</string>
     <string name="ring_volume">Ringer Volume</string>
+    <string name="ring_sound">Ringer Sound</string>
     <string name="alarm_volume">Alarm Volume</string>
     <string name="notification_volume">Notification Volume</string>
-    <string name="notification_sound">Notificaction Sound</string>
+    <string name="notification_sound">Notification Sound</string>
     <string name="title_activity_favorite_quotes">Your Favorite Quotes</string>
     <string name="title_activity_change_settings_menu">Change Settings</string>
     <string name="reset">Reset App</string>

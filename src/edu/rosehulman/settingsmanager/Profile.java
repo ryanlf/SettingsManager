@@ -17,6 +17,8 @@ public class Profile implements Serializable {
 	private int notificationVolume;
 	private String notificationRingtone;
 	private String notificationRingtoneName;
+	private String ringerRingtone;
+	private String ringerRingtoneName;
 	private int alarmVolume;
 	
 	public Profile(){
@@ -26,6 +28,8 @@ public class Profile implements Serializable {
 		notificationVolume = 0;
 		notificationRingtone = "";
 		notificationRingtoneName = "";
+		ringerRingtone = "";
+		ringerRingtoneName = "";
 		alarmVolume = 0;
 	}
 	
@@ -54,6 +58,15 @@ public class Profile implements Serializable {
 		notificationRingtone = ringtone.toString();
 		notificationRingtoneName = RingtoneManager.getRingtone(context, Uri.parse(notificationRingtone)).getTitle(context);
 	}
+
+	public Uri getRingerRingtone(){	return Uri.parse(ringerRingtone); }
+	
+	public String getRingerRingtoneName(){	return ringerRingtoneName; }
+
+	public void setRingerRingtone(Uri ringtone, Context context) { 
+		ringerRingtone = ringtone.toString();
+		ringerRingtoneName = RingtoneManager.getRingtone(context, Uri.parse(ringerRingtone)).getTitle(context);
+	}
 	
 	public int getAlarmVolume(){ return alarmVolume; }
 
@@ -68,9 +81,9 @@ public class Profile implements Serializable {
 		mAudioManager.setStreamVolume(AudioManager.STREAM_RING, ringerVolume, 0);
 		mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume, 0);
 		mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0);
-		
-		Uri current = Uri.parse(notificationRingtone);
-		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, current);
+
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(notificationRingtone));
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));
 	}
 
 }

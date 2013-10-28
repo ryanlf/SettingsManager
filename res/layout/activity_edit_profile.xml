@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/notification_sound"/>
             <Button
-                android:id="@+id/notification_sound_spinner"
+                android:id="@+id/notification_sound_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                  />
@@ -88,6 +88,15 @@
                 android:layout_height="wrap_content"
                  />
             
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ring_sound"/>
+            <Button
+                android:id="@+id/ring_sound_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
         </LinearLayout>
     </ScrollView>
 
