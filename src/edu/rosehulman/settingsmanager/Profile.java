@@ -5,6 +5,9 @@ import java.io.Serializable;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
 public class Profile implements Serializable {
 	
@@ -13,14 +16,16 @@ public class Profile implements Serializable {
 	private int ringerVolume;
 	private int notificationVolume;
 	private String notificationRingtone;
+	private String notificationRingtoneName;
 	private int alarmVolume;
 	
 	public Profile(){
-		profileName = null;
+		profileName = "";
 		systemVolume = 0;
 		ringerVolume = 0;
 		notificationVolume = 0;
 		notificationRingtone = "";
+		notificationRingtoneName = "";
 		alarmVolume = 0;
 	}
 	
@@ -41,9 +46,14 @@ public class Profile implements Serializable {
 
 	public void setNotificationVolume(int progress) { notificationVolume = progress; }
 
-	public String getNotificationRingtone(){	return notificationRingtone; }
+	public Uri getNotificationRingtone(){	return Uri.parse(notificationRingtone); }
+	
+	public String getNotificationRingtoneName(){	return notificationRingtoneName; }
 
-	public void setNotificationRingtone(String ringtone) { notificationRingtone = ringtone; }
+	public void setNotificationRingtone(Uri ringtone, Context context) { 
+		notificationRingtone = ringtone.toString();
+		notificationRingtoneName = RingtoneManager.getRingtone(context, Uri.parse(notificationRingtone)).getTitle(context);
+	}
 	
 	public int getAlarmVolume(){ return alarmVolume; }
 
@@ -59,8 +69,8 @@ public class Profile implements Serializable {
 		mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume, 0);
 		mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0);
 		
-		
-		
+		Uri current = Uri.parse(notificationRingtone);
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, current);
 	}
 
 }

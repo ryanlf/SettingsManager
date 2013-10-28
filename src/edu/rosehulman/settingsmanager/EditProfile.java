@@ -8,7 +8,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
-public class EditProfile extends Activity {
+public class EditProfile extends Activity implements OnClickListener {
 	private Profile mProfile;
 	private SeekBar mSystemVolumeControl;
 	private SeekBar mRingerVolumeControl;
@@ -28,6 +27,11 @@ public class EditProfile extends Activity {
 	private Button mCancelButton;
 	private EditText mNameView;
 	private int requestCode;
+
+	private static final int REQUEST_CODE_NOTIFICATION_SOUND = 1;
+	private static final int REQUEST_CODE_RINGTONE_SOUND = 2;
+	
+	private Uri mCurrentNotificationSound;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class EditProfile extends Activity {
 		mProfile.setSystemVolume(mSystemVolumeControl.getProgress());
 		mProfile.setRingerVolume(mRingerVolumeControl.getProgress());
 		mProfile.setNotificationVolume(mNotificationVolumeControl.getProgress());
+		mProfile.setNotificationRingtone(mCurrentNotificationSound, this);
 		mProfile.setAlarmVolume(mAlarmVolumeControl.getProgress());
 		mProfile.setName(mNameView.getText().toString());
 		Intent result = new Intent();
@@ -94,14 +99,17 @@ public class EditProfile extends Activity {
 		mRingerVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_RING));
 		mNotificationVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION));
 		mAlarmVolumeControl.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM));
-		updateNotificationButton(null);
+		mCurrentNotificationSound = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION);
+		Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentNotificationSound);
+		mNotificationSoundButton.setText(ringtone.getTitle(this));
 	}
 	private void intializeEditProfile(){
 		initializeBasicProfileSettings();
 		mSystemVolumeControl.setProgress(mProfile.getSystemVolume());
 		mRingerVolumeControl.setProgress(mProfile.getRingerVolume());
 		mNotificationVolumeControl.setProgress(mProfile.getNotificationVolume());
-		mNotificationSoundButton.setText(mProfile.getNotificationRingtone());
+		mCurrentNotificationSound = mProfile.getNotificationRingtone();
+		mNotificationSoundButton.setText(mProfile.getNotificationRingtoneName());
 		mAlarmVolumeControl.setProgress(mProfile.getAlarmVolume());
 		mNameView.setText(mProfile.toString());
 	}
@@ -111,30 +119,28 @@ public class EditProfile extends Activity {
 		mRingerVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
 		mNotificationVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
 		mAlarmVolumeControl.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-		mNotificationSoundButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-				intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
-				intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
-				intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
-				updateNotificationButton(intent);
-				
-				ME.startActivityForResult(intent, 5);
-			}
-		});
+		mNotificationSoundButton.setOnClickListener(this);
 		mNameView.setActivated(false);
 	}
-	
-	private void updateNotificationButton(Intent intent){
-		Uri current = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION);
-		Ringtone ringtone = RingtoneManager.getRingtone(this, current);
-		mNotificationSoundButton.setText(ringtone.getTitle(this));
-		if(intent != null)
-			intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, current);
+
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, mCurrentNotificationSound);
+		
+		this.startActivityForResult(intent, REQUEST_CODE_NOTIFICATION_SOUND);
 	}
 	
-	private EditProfile ME = this;
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if (requestCode == REQUEST_CODE_NOTIFICATION_SOUND && resultCode == RESULT_OK){
+			mCurrentNotificationSound = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+			Ringtone ringtone = RingtoneManager.getRingtone(this, mCurrentNotificationSound);
+			mNotificationSoundButton.setText(ringtone.getTitle(this));
+		}
+	}
 
 }
