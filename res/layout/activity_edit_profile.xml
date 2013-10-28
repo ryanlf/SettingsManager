@@ -51,16 +51,6 @@
             <TextView 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ring_volume"/>
-            <SeekBar
-                android:id="@+id/ring_volume_control"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                 />
-            
-            <TextView 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="@string/notification_volume"/>
             <SeekBar
                 android:id="@+id/notification_volume_control"
@@ -71,9 +61,29 @@
             <TextView 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/notification_sound"/>
+            <Button
+                android:id="@+id/notification_sound_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/alarm_volume"/>
             <SeekBar
                 android:id="@+id/alarm_volume_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ring_volume"/>
+            <SeekBar
+                android:id="@+id/ring_volume_control"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                  />
@@ -92,14 +102,14 @@
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="@string/save"
             android:layout_weight="1" />
 
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:layout_weight="1" />
     </TableRow>
 
