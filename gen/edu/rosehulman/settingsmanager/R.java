@@ -61,8 +61,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     public static final class menu {
         public static final int change_settings_menu=0x7f080000;
         public static final int edit_profile=0x7f080001;
-        public static final int favorite_quotes=0x7f080002;
-        public static final int profiles=0x7f080003;
+        public static final int profiles=0x7f080002;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;

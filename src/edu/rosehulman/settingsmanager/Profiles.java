@@ -13,6 +13,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -145,6 +147,8 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 			return false;
 		}
 		ad.notifyDataSetChanged();
+		//updateWidgets();
+		updateAllWidgets();
 		return true;
 	}
 	private boolean removeProfile(Profile profile){
@@ -164,6 +168,8 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 			return false;
 		}
 		ad.notifyDataSetChanged();
+		//updateWidgets();
+		updateAllWidgets();
 		return true;
 	}
 	@Override
@@ -177,6 +183,7 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		}
 		if (requestCode == REQUEST_CODE_ADD_PROFILE && resultCode == RESULT_OK){
 			addNewProfile((Profile) data.getSerializableExtra(KEY_EDIT_PROFILE));
+			
 		}
 	}
 	
@@ -226,4 +233,25 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		};
 		df.show(getFragmentManager(), "");		
 	}
+	
+	
+	/*private void updateWidgets(){
+		Log.d("SET", "Updating widgets");
+		Intent intent = new Intent(this,SettingsManagerWidgetProvider.class);
+		intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+		// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+		// since it seems the onUpdate() is only fired on that:
+		int[] ids = SettingsManagerWidgetProvider.intListToPrimative(SettingsManagerWidgetProvider.readWidgetIds(this));
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+		sendBroadcast(intent);
+	}*/
+	
+	private void updateAllWidgets(){
+	    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+	    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, SettingsManagerWidgetProvider.class));
+	    if (appWidgetIds.length > 0) {
+	        new SettingsManagerWidgetProvider().onUpdate(this, appWidgetManager, appWidgetIds);
+	    }
+	}
+	
 }
