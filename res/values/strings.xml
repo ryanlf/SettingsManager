@@ -17,10 +17,12 @@
     <string name="ring_volume">Ringer Volume</string>
     <string name="ring_sound">Ringer Sound</string>
     <string name="alarm_volume">Alarm Volume</string>
+    <string name="alarm_sound">Alarm Sound</string>
     <string name="notification_volume">Notification Volume</string>
     <string name="notification_sound">Notification Sound</string>
     <string name="title_activity_favorite_quotes">Your Favorite Quotes</string>
     <string name="title_activity_change_settings_menu">Change Settings</string>
+    <string name="brightness">Brightness</string>
     <string name="reset">Reset App</string>
     <string name="theme">Theme</string>
     <string name="light">Light</string>
