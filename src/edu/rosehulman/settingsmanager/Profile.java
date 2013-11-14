@@ -122,8 +122,10 @@ public class Profile implements Serializable {
 		mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0);
 
 		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(notificationRingtone));
-		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));		
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_ALARM, Uri.parse(alarmRingtone));
+		
+		Settings.System.putInt(parent.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);		
 	}
-	
 	
 }
