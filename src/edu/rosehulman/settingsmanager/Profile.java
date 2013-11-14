@@ -8,6 +8,8 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.provider.Settings;
+import android.view.WindowManager;
 
 public class Profile implements Serializable {
 	
@@ -19,7 +21,10 @@ public class Profile implements Serializable {
 	private String notificationRingtoneName;
 	private String ringerRingtone;
 	private String ringerRingtoneName;
+	private String alarmRingtone;
+	private String alarmRingtoneName;
 	private int alarmVolume;
+	private int brightness;
 	
 	public Profile(){
 		profileName = "";
@@ -30,7 +35,10 @@ public class Profile implements Serializable {
 		notificationRingtoneName = "";
 		ringerRingtone = "";
 		ringerRingtoneName = "";
+		alarmRingtone = "";
+		alarmRingtoneName = "";
 		alarmVolume = 0;
+		brightness = 0;
 	}
 	
 	@Override
@@ -70,7 +78,20 @@ public class Profile implements Serializable {
 	
 	public int getAlarmVolume(){ return alarmVolume; }
 
+	public Uri getAlarmRingtone(){	return Uri.parse(alarmRingtone); }
+	
+	public String getAlarmRingtoneName(){	return alarmRingtoneName; }
+
+	public void setAlarmRingtone(Uri ringtone, Context context) { 
+		alarmRingtone = ringtone.toString();
+		alarmRingtoneName = RingtoneManager.getRingtone(context, Uri.parse(alarmRingtone)).getTitle(context);
+	}
+	
 	public void setAlarmVolume(int progress) { alarmVolume = progress; }
+	
+	public int getBrightness() { return brightness; }
+	
+	public void setBrightness(int progress) { brightness = progress; }
 
 	public void setName(String string) {
 		profileName = string;
@@ -84,6 +105,9 @@ public class Profile implements Serializable {
 
 		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(notificationRingtone));
 		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_ALARM, Uri.parse(alarmRingtone));
+		
+		Settings.System.putInt(parent.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
 	}
 
 }
