@@ -24,24 +24,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="edu.rosehulman.settingsmanager.SetProfileActivity" >
+        </activity>
         <activity
             android:name="edu.rosehulman.settingsmanager.EditProfile"
             android:label="@string/title_activity_edit_profile"
             android:windowSoftInputMode="stateHidden" >
         </activity>
-        <activity
-            android:name="edu.rosehulman.settingsmanager.FavoriteQuotesActivity"
-            android:label="@string/title_activity_favorite_quotes" >
-        </activity>
-        <activity
-            android:name="edu.rosehulman.settingsmanager.ChangeSettingsMenuActivity"
-            android:label="@string/title_activity_change_settings_menu" >
-        </activity>
 
-        <receiver 
-            android:name="edu.rosehulman.settingsmanager.SettingsManagerWidgetProvider" >
+        <receiver android:name="edu.rosehulman.settingsmanager.SettingsManagerWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="edu.rosehulman.settingsmanager.SET_PROFILE_ACTION" />
             </intent-filter>
 
             <meta-data
@@ -51,7 +45,14 @@
 
         <service
             android:name="edu.rosehulman.settingsmanager.SettingsManagerWidgetService"
+            android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name="edu.rosehulman.settingsmanager.SetProfileService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+      
     </application>
 
 </manifest>

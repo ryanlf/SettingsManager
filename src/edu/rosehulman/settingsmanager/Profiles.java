@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import android.media.AudioManager;
-import android.os.Bundle;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,7 +17,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,8 +44,8 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.setTitle(R.string.main_title);
 		setContentView(R.layout.activity_profiles);
-		
 		try {
 			FileInputStream fileRead = openFileInput(getString(R.string.data_file_name));
 			ObjectInputStream objectInput = new ObjectInputStream(fileRead);
@@ -96,6 +95,7 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 			long arg3) {
 		DialogFragment df = new DialogFragment() {
 			
+			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
 				AlertDialog.Builder editBuilder = new AlertDialog.Builder(
 						getActivity());
@@ -147,7 +147,6 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 			return false;
 		}
 		ad.notifyDataSetChanged();
-		//updateWidgets();
 		updateAllWidgets();
 		return true;
 	}
@@ -234,24 +233,11 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 		df.show(getFragmentManager(), "");		
 	}
 	
-	
-	/*private void updateWidgets(){
-		Log.d("SET", "Updating widgets");
-		Intent intent = new Intent(this,SettingsManagerWidgetProvider.class);
-		intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-		// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-		// since it seems the onUpdate() is only fired on that:
-		int[] ids = SettingsManagerWidgetProvider.intListToPrimative(SettingsManagerWidgetProvider.readWidgetIds(this));
-		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
-		sendBroadcast(intent);
-	}*/
-	
 	private void updateAllWidgets(){
 	    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 	    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, SettingsManagerWidgetProvider.class));
-	    if (appWidgetIds.length > 0) {
-	        new SettingsManagerWidgetProvider().onUpdate(this, appWidgetManager, appWidgetIds);
-	    }
+	    Log.d("SET","Trying to update DataSet");
+	    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgit_list_view);
 	}
 	
 }

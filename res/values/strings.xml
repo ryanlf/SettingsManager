@@ -30,5 +30,8 @@
     <string name="yes">Yes</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="main_title">Settings Manager</string>
+    <string name = "edit_profile_activity">Edit Profile</string>
+    <string name = "add_profile_activity">Add Profile</string>
 
 </resources>

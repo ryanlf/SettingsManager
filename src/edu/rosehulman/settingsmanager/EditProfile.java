@@ -38,11 +38,13 @@ public class EditProfile extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_profile);
 		Intent intent = this.getIntent();
 		mProfile = (Profile) intent.getSerializableExtra(Profiles.KEY_EDIT_PROFILE);
-		mAudioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
 		requestCode = intent.getIntExtra(Profiles.KEY_REQUEST_CODE, 1);
+		if (requestCode == Profiles.REQUEST_CODE_ADD_PROFILE) setTitle(R.string.add_profile_activity);
+		else setTitle(R.string.edit_profile_activity);
+		setContentView(R.layout.activity_edit_profile);
+		mAudioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
 		//Identify controls
 		mNameView = (EditText) findViewById(R.id.editText1);
 		mSystemVolumeControl = (SeekBar) findViewById(R.id.system_volume_control);

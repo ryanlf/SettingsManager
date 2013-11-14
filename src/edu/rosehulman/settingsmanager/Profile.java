@@ -3,14 +3,18 @@ package edu.rosehulman.settingsmanager;
 import java.io.Serializable;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
 public class Profile implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7799129024099471190L;
 	private String profileName;
 	private int systemVolume;
 	private int ringerVolume;
@@ -86,4 +90,16 @@ public class Profile implements Serializable {
 		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));
 	}
 
+	public void setSettings(Service parent) {
+		AudioManager mAudioManager=(AudioManager) parent.getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, systemVolume, 0);
+		mAudioManager.setStreamVolume(AudioManager.STREAM_RING, ringerVolume, 0);
+		mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume, 0);
+		mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0);
+
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_NOTIFICATION, Uri.parse(notificationRingtone));
+		RingtoneManager.setActualDefaultRingtoneUri(parent, RingtoneManager.TYPE_RINGTONE, Uri.parse(ringerRingtone));		
+	}
+	
+	
 }
