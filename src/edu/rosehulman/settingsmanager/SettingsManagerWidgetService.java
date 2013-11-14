@@ -68,20 +68,15 @@ class SettingsManagerRemoteViewsFactory implements
 	    // and set the text based on the position.
 	    RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
 	    rv.setTextViewText(R.id.widget_text_row, mProfileData.get(position).toString()); 
-	    
-	    
 	    Bundle extras = new Bundle();
-	    //
-	    //extras.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 	    extras.putInt(SettingsManagerWidgetProvider.KEY_POSITION,position);
 	    extras.putString("SETString", "TEST TEST");
 	    //extras.putSerializable(SettingsManagerWidgetProvider.KEY_PROFILE, mProfileData.get(position));
 	    Intent i = new Intent();
-	    
 	    i.putExtras(extras);
 	    rv.setOnClickFillInIntent(R.id.widget_text_row, i);
 	    
-	    // Return the remote views object.
+
 	    return rv;
 	}
 

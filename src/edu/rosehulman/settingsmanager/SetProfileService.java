@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+/**
+ * This Class is used by the widget to call the profile.setSettings, as its context is not powerful enough to use.
+ * @author Logan
+ *
+ */
 public class SetProfileService extends IntentService {
 	public SetProfileService() {
 		super("SetProfileService");
