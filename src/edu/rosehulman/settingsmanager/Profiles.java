@@ -236,7 +236,6 @@ public class Profiles extends Activity implements OnItemClickListener,OnItemLong
 	private void updateAllWidgets(){
 	    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 	    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, SettingsManagerWidgetProvider.class));
-	    Log.d("SET","Trying to update DataSet");
 	    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgit_list_view);
 	}
 	
